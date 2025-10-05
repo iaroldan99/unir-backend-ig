@@ -1,0 +1,272 @@
+{
+  "info": {
+    "name": "Instagram Messaging API",
+    "description": "Colección de endpoints para la API de mensajería de Instagram",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Checks",
+      "item": [
+        {
+          "name": "Webhook Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/webhook/instagram/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["webhook", "instagram", "health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Messages Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/messages/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "messages", "health"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unified Controller Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/send/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["send", "health"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Webhook",
+      "item": [
+        {
+          "name": "Verificar Webhook (Challenge)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/webhook/instagram?hub.mode=subscribe&hub.verify_token=your-verify-token-here&hub.challenge=TEST12345",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["webhook", "instagram"],
+              "query": [
+                {
+                  "key": "hub.mode",
+                  "value": "subscribe"
+                },
+                {
+                  "key": "hub.verify_token",
+                  "value": "your-verify-token-here"
+                },
+                {
+                  "key": "hub.challenge",
+                  "value": "TEST12345"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Recibir Mensaje (Simulado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"object\": \"instagram\",\n  \"entry\": [\n    {\n      \"id\": \"test-page-123\",\n      \"time\": 1696531200,\n      \"messaging\": [\n        {\n          \"sender\": {\n            \"id\": \"sender-test-456\"\n          },\n          \"recipient\": {\n            \"id\": \"recipient-test-789\"\n          },\n          \"timestamp\": 1696531200000,\n          \"message\": {\n            \"mid\": \"test-message-id\",\n            \"text\": \"Hola desde Postman! 👋\"\n          }\n        }\n      ]\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/webhook/instagram",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["webhook", "instagram"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Recibir Mensaje con Imagen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"object\": \"instagram\",\n  \"entry\": [\n    {\n      \"id\": \"test-page-123\",\n      \"time\": 1696531200,\n      \"messaging\": [\n        {\n          \"sender\": {\n            \"id\": \"sender-test-456\"\n          },\n          \"recipient\": {\n            \"id\": \"recipient-test-789\"\n          },\n          \"timestamp\": 1696531200000,\n          \"message\": {\n            \"mid\": \"test-message-img-001\",\n            \"text\": \"Mira esta imagen\",\n            \"attachments\": [\n              {\n                \"type\": \"image\",\n                \"payload\": {\n                  \"url\": \"https://example.com/image.jpg\"\n                }\n              }\n            ]\n          }\n        }\n      ]\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/webhook/instagram",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["webhook", "instagram"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Enviar Mensajes",
+      "item": [
+        {
+          "name": "Enviar Mensaje (Formato Unificado)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipient\": \"INSTAGRAM_USER_ID\",\n  \"message\": \"¡Hola desde Postman! 🚀\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/send/instagram",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["send", "instagram"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enviar Mensaje (Formato Alternativo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipientId\": \"INSTAGRAM_USER_ID\",\n  \"text\": \"¡Hola desde Postman! 🎉\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/messages/send",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "messages", "send"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Enviar Mensaje por User ID",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"Mensaje directo al usuario ✨\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/send/instagram/INSTAGRAM_USER_ID/messages",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["send", "instagram", "INSTAGRAM_USER_ID", "messages"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tests de Validación",
+      "item": [
+        {
+          "name": "Test: Sin recipientId (debe fallar)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Mensaje sin destinatario\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/messages/send",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "messages", "send"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Test: Sin texto (debe fallar)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"recipientId\": \"123456789\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/messages/send",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "8080",
+              "path": ["api", "messages", "send"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
+

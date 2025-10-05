@@ -1,0 +1,65 @@
+# =============================================
+# PLANTILLA DE VARIABLES DE ENTORNO
+# =============================================
+# Copia estas variables y configúralas en tu entorno
+
+# 1. Exportar en tu terminal (Linux/Mac):
+#    export INSTAGRAM_ACCESS_TOKEN="tu_token_aqui"
+#    export INSTAGRAM_VERIFY_TOKEN="tu_verify_token"
+#    export INSTAGRAM_PAGE_ID="tu_page_id"
+
+# 2. O crear un archivo .env y cargarlo:
+#    Crea el archivo .env con este contenido y luego ejecuta:
+#    export $(cat .env | xargs)
+
+# =============================================
+# VARIABLES REQUERIDAS
+# =============================================
+
+# Page Access Token de Meta
+# Obtenerlo desde: https://developers.facebook.com/tools/explorer/
+# Permisos necesarios: instagram_basic, instagram_manage_messages, pages_messaging
+INSTAGRAM_ACCESS_TOKEN=your_page_access_token_here
+
+# Token de verificación para webhooks (cualquier string secreto)
+# Ejemplo: Genera uno con: uuidgen (Mac/Linux) o usa un string personalizado
+INSTAGRAM_VERIFY_TOKEN=your_custom_verify_token_here
+
+# Instagram Business Account ID
+# Obtenerlo desde: https://graph.facebook.com/v18.0/{PAGE_ID}?fields=instagram_business_account
+INSTAGRAM_PAGE_ID=your_instagram_business_account_id_here
+
+# Puerto del servidor (opcional)
+SERVER_PORT=8080
+
+# =============================================
+# INSTRUCCIONES
+# =============================================
+
+# Paso 1: Reemplaza los valores "your_xxx_here" con tus credenciales reales
+
+# Paso 2: Crea un archivo .env (asegúrate de que .gitignore lo excluya):
+#   cp env-template.txt .env
+#   # Edita .env con tus credenciales
+
+# Paso 3: Carga las variables:
+#   export $(cat .env | xargs)
+
+# Paso 4: Verifica que se cargaron:
+#   echo $INSTAGRAM_ACCESS_TOKEN
+
+# Paso 5: Ejecuta la aplicación:
+#   mvn spring-boot:run
+
+# =============================================
+# NOTAS DE SEGURIDAD
+# =============================================
+
+# ⚠️  NUNCA subas el archivo .env a Git
+# ⚠️  NUNCA compartas tus tokens públicamente
+# ⚠️  Los tokens de Meta expiran - usa tokens de larga duración
+# ⚠️  Para producción, usa variables de entorno del sistema o un gestor de secretos
+
+# =============================================
+
+
