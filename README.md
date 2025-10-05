@@ -348,6 +348,28 @@ mvn spring-boot:run
 - Verifica que tengas los permisos necesarios
 - Verifica que el recipientId sea correcto
 
+## 📚 Documentación
+
+Toda la documentación está organizada en la carpeta [`docs/`](docs/):
+
+- **[INDEX.md](docs/INDEX.md)** - Índice completo de documentación
+- **[QUICK_START.md](docs/QUICK_START.md)** - Inicio rápido (< 10 min)
+- **[SETUP_GUIDE.md](docs/SETUP_GUIDE.md)** - Guía de configuración detallada
+- **[CREDENCIALES_INSTAGRAM.md](docs/CREDENCIALES_INSTAGRAM.md)** - Cómo obtener credenciales
+- **[CURL_COMMANDS.md](docs/CURL_COMMANDS.md)** - Todos los comandos cURL
+- **[PASOS_CONFIGURACION.md](docs/PASOS_CONFIGURACION.md)** - Checklist de configuración
+- **[GIT_CONFIG.md](docs/GIT_CONFIG.md)** - Configuración de Git
+
+### Scripts Disponibles
+
+- **[test-api.sh](scripts/test-api.sh)** - Suite de tests automatizados
+- **[curl-examples.sh](scripts/curl-examples.sh)** - Ejemplos detallados
+- **[setup-credentials.sh](scripts/setup-credentials.sh)** - Configurar credenciales
+
+### Colección de Postman
+
+Importa [`postman/Instagram_API.postman_collection.json`](postman/Instagram_API.postman_collection.json) en Postman para probar todos los endpoints.
+
 ## 🚀 Próximos Pasos
 
 Para integrar con el sistema de mensajería unificada:

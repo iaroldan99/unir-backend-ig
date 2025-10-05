@@ -8,10 +8,10 @@
 2. **[PASOS_CONFIGURACION.md](PASOS_CONFIGURACION.md)** 📋  
    Checklist visual de configuración paso a paso
 
-3. **[test-api.sh](test-api.sh)** 🧪  
+3. **[../scripts/test-api.sh](../scripts/test-api.sh)** 🧪  
    Script para verificar que la API funciona
    ```bash
-   ./test-api.sh
+   ./scripts/test-api.sh
    ```
 
 ---
@@ -26,15 +26,15 @@
 - **[CREDENCIALES_INSTAGRAM.md](CREDENCIALES_INSTAGRAM.md)** 🔐  
   Cómo obtener credenciales de Meta Developer Portal
 
-- **[setup-credentials.sh](setup-credentials.sh)** 🤖  
+- **[../scripts/setup-credentials.sh](../scripts/setup-credentials.sh)** 🤖  
   Asistente interactivo para configurar credenciales
   ```bash
-  ./setup-credentials.sh
+  ./scripts/setup-credentials.sh
   ```
 
 ### Documentación General
 
-- **[README.md](README.md)** 📘  
+- **[../README.md](../README.md)** 📘  
   Documentación general del proyecto, arquitectura y uso
 
 - **[GIT_CONFIG.md](GIT_CONFIG.md)** 🔧  
@@ -42,10 +42,10 @@
 
 ### Testing y Ejemplos
 
-- **[curl-examples.sh](curl-examples.sh)** 💻  
+- **[../scripts/curl-examples.sh](../scripts/curl-examples.sh)** 💻  
   Ejemplos detallados de prueba con cURL
   ```bash
-  ./curl-examples.sh
+  ./scripts/curl-examples.sh
   ```
 
 - **[test-api.sh](test-api.sh)** ✅  
@@ -53,8 +53,13 @@
 
 ### Plantillas
 
-- **[env-template.txt](env-template.txt)** 📝  
+- **[../env-template.txt](../env-template.txt)** 📝  
   Plantilla para variables de entorno
+
+### Colección de Postman
+
+- **[../postman/Instagram_API.postman_collection.json](../postman/Instagram_API.postman_collection.json)** 📮  
+  Colección completa de endpoints para importar en Postman
 
 ---
 
@@ -98,23 +103,29 @@
 
 ```
 Seminario/
-├── 📚 DOCUMENTACIÓN
+├── 📚 DOCUMENTACIÓN (docs/)
 │   ├── INDEX.md                          ← Estás aquí
-│   ├── README.md                         ← Documentación principal
 │   ├── QUICK_START.md                    ← Inicio rápido
-│   ├── SETUP_GUIDE.md                    ← Guía detallada
-│   ├── PASOS_CONFIGURACION.md            ← Checklist visual
-│   ├── CREDENCIALES_INSTAGRAM.md         ← Cómo obtener credenciales
-│   └── GIT_CONFIG.md                     ← Config de Git
+│   ├── SETUP_GUIDE.md
+│   ├── PASOS_CONFIGURACION.md
+│   ├── CREDENCIALES_INSTAGRAM.md
+│   ├── CURL_COMMANDS.md
+│   ├── GUIA_RAPIDA_IG.md
+│   └── GIT_CONFIG.md
 │
-├── 🔧 SCRIPTS
+├── 🔧 SCRIPTS (scripts/)
 │   ├── setup-credentials.sh              ← Configurar credenciales
 │   ├── test-api.sh                       ← Tests automatizados
 │   └── curl-examples.sh                  ← Ejemplos de prueba
 │
-├── 📝 PLANTILLAS
+├── 📮 POSTMAN (postman/)
+│   └── Instagram_API.postman_collection.json
+│
+├── 📝 CONFIGURACIÓN
+│   ├── README.md                         ← Documentación principal
 │   ├── env-template.txt                  ← Template de .env
-│   └── .gitignore                        ← Git ignore
+│   ├── .gitignore                        ← Git ignore
+│   └── pom.xml                           ← Maven config
 │
 ├── 💻 CÓDIGO FUENTE
 │   ├── src/main/java/
