@@ -385,14 +385,6 @@ Para integrar con el sistema de mensajería unificada:
 - [Instagram Graph API Reference](https://developers.facebook.com/docs/instagram-api)
 - [Webhook Best Practices](https://developers.facebook.com/docs/graph-api/webhooks/getting-started)
 
-## 👥 Equipo
-
-**Equipo 3 - Instagram Integration**
-
-## 📄 Licencia
-
-Este proyecto es parte del Seminario de Actualización de UADE.
-
 ---
 
 **¿Necesitas ayuda?** Revisa los logs con `mvn spring-boot:run` o consulta la documentación de Meta Developers.
