@@ -1,28 +1,22 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 spring:
   application:
     name: instagram-messaging-api
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
-# Configuración de Instagram API
 instagram:
   api:
-    # URL base de la Graph API de Meta
-    base-url: https://graph.facebook.com/v18.0
-    # Token de acceso de la página (obtener de Meta Developer Portal)
-    access-token: ${INSTAGRAM_ACCESS_TOKEN:your-access-token-here}
-    # Token de verificación para webhooks
-    verify-token: ${INSTAGRAM_VERIFY_TOKEN:your-verify-token-here}
-    # ID de la página de Instagram
-    page-id: ${INSTAGRAM_PAGE_ID:your-page-id-here}
+    base-url: ${INSTAGRAM_BASE_URL:https://graph.facebook.com/v18.0}
+    access-token: ${INSTAGRAM_ACCESS_TOKEN}
+    verify-token: ${INSTAGRAM_VERIFY_TOKEN}
+    page-id: ${INSTAGRAM_PAGE_ID}
 
-# Configuración de logging
 logging:
   level:
-    com.uade.seminario: DEBUG
-    org.springframework.web: INFO
+    com.uade.seminario: ${LOG_LEVEL:INFO}
+    org.springframework.web: WARN
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-
-

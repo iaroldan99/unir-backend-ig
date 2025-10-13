@@ -1,0 +1,11 @@
+instagram:
+  api:
+    base-url: http://localhost:8080
+    access-token: test-access-token
+    verify-token: test-verify-token
+    page-id: test-page-id
+
+logging:
+  level:
+    com.uade.seminario: DEBUG
+

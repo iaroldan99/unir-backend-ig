@@ -1,0 +1,10 @@
+logging:
+  level:
+    com.uade.seminario: INFO
+    org.springframework.web: WARN
+
+server:
+  error:
+    include-message: never
+    include-stacktrace: never
+

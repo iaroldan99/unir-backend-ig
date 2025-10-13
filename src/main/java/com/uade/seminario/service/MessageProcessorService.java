@@ -1,65 +1,40 @@
 package com.uade.seminario.service;
 
+import com.uade.seminario.dto.MessageDTO;
 import com.uade.seminario.model.IncomingMessage;
-import com.uade.seminario.model.MessageDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-/**
- * Servicio para procesar mensajes entrantes de Instagram
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MessageProcessorService {
 
-    /**
-     * Procesa un mensaje entrante de Instagram
-     */
     public void processIncomingMessage(IncomingMessage incomingMessage) {
         if (incomingMessage == null || incomingMessage.getEntry() == null) {
-            log.warn("Mensaje entrante vacío o nulo");
+            log.warn("Empty or null incoming message");
             return;
         }
 
-        // Iterar sobre cada entrada
         incomingMessage.getEntry().forEach(entry -> {
             if (entry.getMessaging() != null) {
-                entry.getMessaging().forEach(messaging -> {
-                    processMessagingEvent(messaging);
-                });
+                entry.getMessaging().forEach(this::processMessagingEvent);
             }
         });
     }
 
-    /**
-     * Procesa un evento de mensajería individual
-     */
     private void processMessagingEvent(IncomingMessage.Messaging messaging) {
         if (messaging.getMessage() == null) {
-            log.debug("Evento de mensajería sin mensaje (puede ser un evento de entrega/lectura)");
+            log.debug("Messaging event without message");
             return;
         }
 
-        // Convertir a DTO normalizado
         MessageDTO messageDTO = convertToMessageDTO(messaging);
-        
-        log.info("Mensaje procesado: {}", messageDTO);
-        
-        // Aquí puedes:
-        // 1. Guardar el mensaje en una base de datos
-        // 2. Enviarlo a un sistema de mensajería (Kafka, RabbitMQ, etc.)
-        // 3. Procesarlo con lógica de negocio
-        // 4. Responder automáticamente si es necesario
-        
-        // Por ahora solo lo registramos
+        log.info("Message processed: {}", messageDTO);
         logMessageDetails(messageDTO);
     }
 
-    /**
-     * Convierte un mensaje de Instagram al formato normalizado
-     */
     private MessageDTO convertToMessageDTO(IncomingMessage.Messaging messaging) {
         IncomingMessage.Message message = messaging.getMessage();
         
@@ -80,9 +55,6 @@ public class MessageProcessorService {
                 .build();
     }
 
-    /**
-     * Mapea el tipo de adjunto de Instagram a nuestro enum
-     */
     private MessageDTO.MessageType mapAttachmentType(String attachmentType) {
         if (attachmentType == null) {
             return MessageDTO.MessageType.OTHER;
@@ -97,19 +69,15 @@ public class MessageProcessorService {
         };
     }
 
-    /**
-     * Registra los detalles del mensaje
-     */
     private void logMessageDetails(MessageDTO messageDTO) {
         log.info("═══════════════════════════════════════");
-        log.info("📩 NUEVO MENSAJE DE INSTAGRAM");
+        log.info("📩 NEW INSTAGRAM MESSAGE");
         log.info("ID: {}", messageDTO.getMessageId());
-        log.info("De: {}", messageDTO.getSenderId());
-        log.info("Para: {}", messageDTO.getRecipientId());
-        log.info("Tipo: {}", messageDTO.getType());
-        log.info("Texto: {}", messageDTO.getText());
+        log.info("From: {}", messageDTO.getSenderId());
+        log.info("To: {}", messageDTO.getRecipientId());
+        log.info("Type: {}", messageDTO.getType());
+        log.info("Text: {}", messageDTO.getText());
         log.info("Timestamp: {}", messageDTO.getTimestamp());
         log.info("═══════════════════════════════════════");
     }
 }
-

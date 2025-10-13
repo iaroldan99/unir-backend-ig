@@ -1,0 +1,11 @@
+logging:
+  level:
+    com.uade.seminario: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.web.reactive.function.client: DEBUG
+
+spring:
+  devtools:
+    restart:
+      enabled: true
+

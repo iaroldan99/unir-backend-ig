@@ -1,6 +1,7 @@
 package com.uade.seminario.controller;
 
 import com.uade.seminario.config.InstagramConfig;
+import com.uade.seminario.dto.HealthResponse;
 import com.uade.seminario.model.IncomingMessage;
 import com.uade.seminario.service.MessageProcessorService;
 import lombok.RequiredArgsConstructor;
@@ -9,9 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * Controlador para manejar webhooks de Instagram
- */
 @Slf4j
 @RestController
 @RequestMapping("/webhook/instagram")
@@ -21,57 +19,44 @@ public class WebhookController {
     private final InstagramConfig instagramConfig;
     private final MessageProcessorService messageProcessorService;
 
-    /**
-     * Endpoint de verificación del webhook (GET)
-     * Meta enviará una solicitud GET para verificar el webhook
-     */
     @GetMapping
     public ResponseEntity<String> verifyWebhook(
             @RequestParam("hub.mode") String mode,
             @RequestParam("hub.verify_token") String token,
             @RequestParam("hub.challenge") String challenge) {
         
-        log.info("Recibida solicitud de verificación del webhook");
+        log.info("Webhook verification request received");
         log.debug("Mode: {}, Token: {}", mode, token);
 
-        // Verificar que el token coincida con el configurado
         if ("subscribe".equals(mode) && token.equals(instagramConfig.getVerifyToken())) {
-            log.info("Webhook verificado exitosamente");
+            log.info("Webhook verified successfully");
             return ResponseEntity.ok(challenge);
-        } else {
-            log.error("Fallo en la verificación del webhook. Token inválido.");
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Token de verificación inválido");
         }
+        
+        log.error("Webhook verification failed - invalid token");
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid verification token");
     }
 
-    /**
-     * Endpoint para recibir mensajes (POST)
-     * Instagram enviará los mensajes a este endpoint
-     */
     @PostMapping
     public ResponseEntity<String> receiveMessage(@RequestBody IncomingMessage incomingMessage) {
         try {
-            log.info("Mensaje recibido de Instagram: {}", incomingMessage);
-            
-            // Procesar el mensaje
+            log.info("Message received from Instagram: {}", incomingMessage);
             messageProcessorService.processIncomingMessage(incomingMessage);
-            
-            // Responder rápidamente a Instagram (requerido)
             return ResponseEntity.ok("EVENT_RECEIVED");
-            
         } catch (Exception e) {
-            log.error("Error procesando mensaje de Instagram", e);
-            // Aún así retornar 200 para que Instagram no reintente
+            log.error("Error processing Instagram message", e);
             return ResponseEntity.ok("EVENT_RECEIVED");
         }
     }
 
-    /**
-     * Endpoint de health check
-     */
     @GetMapping("/health")
-    public ResponseEntity<String> health() {
-        return ResponseEntity.ok("Webhook activo y funcionando");
+    public ResponseEntity<HealthResponse> health() {
+        HealthResponse response = HealthResponse.builder()
+                .status("UP")
+                .service("Webhook Controller")
+                .version("1.0.0")
+                .build();
+                
+        return ResponseEntity.ok(response);
     }
 }
-

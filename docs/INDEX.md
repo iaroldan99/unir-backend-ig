@@ -37,9 +37,6 @@
 - **[../README.md](../README.md)** 📘  
   Documentación general del proyecto, arquitectura y uso
 
-- **[GIT_CONFIG.md](GIT_CONFIG.md)** 🔧  
-  Configuración de Git para este repositorio
-
 ### Testing y Ejemplos
 
 - **[../scripts/curl-examples.sh](../scripts/curl-examples.sh)** 💻  

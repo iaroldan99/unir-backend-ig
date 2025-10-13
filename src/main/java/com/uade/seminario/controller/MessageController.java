@@ -1,16 +1,15 @@
 package com.uade.seminario.controller;
 
+import com.uade.seminario.dto.HealthResponse;
+import com.uade.seminario.dto.SendMessageRequest;
+import com.uade.seminario.dto.SendMessageResponse;
 import com.uade.seminario.service.InstagramMessageSenderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
-/**
- * Controlador REST para enviar mensajes a Instagram
- */
 @Slf4j
 @RestController
 @RequestMapping("/api/messages")
@@ -19,55 +18,33 @@ public class MessageController {
 
     private final InstagramMessageSenderService messageSenderService;
 
-    /**
-     * Endpoint para enviar un mensaje de texto
-     * 
-     * POST /api/messages/send
-     * Body: {
-     *   "recipientId": "instagram_user_id",
-     *   "text": "Hola desde la API"
-     * }
-     */
     @PostMapping("/send")
-    public ResponseEntity<?> sendMessage(@RequestBody Map<String, String> request) {
-        try {
-            String recipientId = request.get("recipientId");
-            String text = request.get("text");
-
-            if (recipientId == null || text == null) {
-                return ResponseEntity.badRequest()
-                        .body(Map.of("error", "recipientId y text son requeridos"));
-            }
-
-            log.info("Solicitud para enviar mensaje a: {}", recipientId);
-            
-            String response = messageSenderService.sendTextMessageSync(recipientId, text);
-            
-            return ResponseEntity.ok(Map.of(
-                    "status", "success",
-                    "message", "Mensaje enviado correctamente",
-                    "response", response
-            ));
-            
-        } catch (Exception e) {
-            log.error("Error al enviar mensaje", e);
-            return ResponseEntity.internalServerError()
-                    .body(Map.of(
-                            "status", "error",
-                            "message", e.getMessage()
-                    ));
-        }
+    public ResponseEntity<SendMessageResponse> sendMessage(@Valid @RequestBody SendMessageRequest request) {
+        log.info("Request to send message to: {}", request.getRecipientId());
+        
+        String messageId = messageSenderService.sendTextMessageSync(
+            request.getRecipientId(), 
+            request.getText()
+        );
+        
+        SendMessageResponse response = SendMessageResponse.builder()
+                .status("success")
+                .message("Message sent successfully")
+                .messageId(messageId)
+                .recipientId(request.getRecipientId())
+                .build();
+                
+        return ResponseEntity.ok(response);
     }
 
-    /**
-     * Health check del controlador
-     */
     @GetMapping("/health")
-    public ResponseEntity<Map<String, String>> health() {
-        return ResponseEntity.ok(Map.of(
-                "status", "UP",
-                "service", "Message Controller"
-        ));
+    public ResponseEntity<HealthResponse> health() {
+        HealthResponse response = HealthResponse.builder()
+                .status("UP")
+                .service("Message Controller")
+                .version("1.0.0")
+                .build();
+                
+        return ResponseEntity.ok(response);
     }
 }
-
