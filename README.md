@@ -43,7 +43,6 @@ API REST desarrollada con **Java + Spring Boot** para integrar Instagram Messagi
 ### 1. Clonar y compilar el proyecto
 
 ```bash
-cd /Users/iroldan/Desktop/UADE/Seminario
 mvn clean install
 ```
 
