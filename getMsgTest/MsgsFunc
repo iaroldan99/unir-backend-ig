@@ -13,6 +13,8 @@ public class MsgsFunc {
     String urlPageId;
     String urlConversationIdA;
     String urlConversationIdB;
+    String urlPostA;
+    String urlPostB;
 
 
 
@@ -22,6 +24,8 @@ public class MsgsFunc {
         this.urlPageId = "https://graph.facebook.com/v21.0/me/accounts?access_token=" + token;
         this.urlConversationIdA = "https://graph.facebook.com/v21.0/";
         this.urlConversationIdB = "/conversations?platform=instagram&access_token=";
+        this.urlPostA = "https://graph.facebook.com/v21.0/";
+        this.urlPostB = "/messages?access_token=";
     }
 
     public void getMsg() throws IOException, InterruptedException {
@@ -146,6 +150,66 @@ public class MsgsFunc {
 
 
 
+
+    }
+
+
+    public void postMessage(String userToken, String recipientId, String msg) throws IOException, InterruptedException{
+
+        HttpClient client1 = HttpClient.newHttpClient();
+        //System.out.println("URL: " + urlPageId);
+
+
+        HttpRequest request1 = HttpRequest.newBuilder()
+                .uri(URI.create(urlPageId))
+                .GET()
+                .build();
+
+        HttpResponse<String> response1 = client1.send(request1, HttpResponse.BodyHandlers.ofString());
+
+        JSONObject json1 = new JSONObject(response1.body());
+        JSONArray jsonArray1 = json1.getJSONArray("data");
+
+        JSONObject firstItem = jsonArray1.getJSONObject(0);
+
+        // Extract access_token and id
+        String pageAccessToken = firstItem.getString("access_token");
+        String pageId = firstItem.getString("id");
+
+        System.out.println(pageAccessToken);
+        System.out.println(pageId);
+
+        urlPostA += pageId;
+        urlPostB += pageAccessToken;
+
+        String urlPostFull = urlPostA + urlPostB;
+
+        JSONObject message = new JSONObject();
+        message.put("text", msg);
+
+        JSONObject recipient = new JSONObject();
+        recipient.put("id", recipientId);
+
+        JSONObject body = new JSONObject();
+        body.put("messaging_type", "RESPONSE");
+        body.put("recipient", recipient);
+        body.put("message", message);
+
+        System.out.println(body.toString(2));
+
+
+        HttpRequest request2 = HttpRequest.newBuilder()
+                .uri(URI.create(urlPostFull))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body.toString()))
+                .build();
+
+        // Send request
+        HttpClient client2 = HttpClient.newHttpClient();
+        HttpResponse<String> response2 = client2.send(request2, HttpResponse.BodyHandlers.ofString());
+
+        // Print response
+        System.out.println(response2.body());
 
     }
 
