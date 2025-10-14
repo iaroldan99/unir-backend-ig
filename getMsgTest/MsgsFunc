@@ -1,0 +1,155 @@
+package org.example;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class MsgsFunc {
+    String token;
+    String urlPageId;
+    String urlConversationIdA;
+    String urlConversationIdB;
+
+
+
+
+    public MsgsFunc(String token) {
+        this.token = token;
+        this.urlPageId = "https://graph.facebook.com/v21.0/me/accounts?access_token=" + token;
+        this.urlConversationIdA = "https://graph.facebook.com/v21.0/";
+        this.urlConversationIdB = "/conversations?platform=instagram&access_token=";
+    }
+
+    public void getMsg() throws IOException, InterruptedException {
+
+
+        /*
+        Paso 1: Tenemos que conseguir:
+        -Id de la página de fb
+        -Token de la página (=/= token de usuario)
+         */
+
+
+        HttpClient client = HttpClient.newHttpClient();
+        //System.out.println("URL: " + urlPageId);
+
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlPageId))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        JSONObject json1 = new JSONObject(response.body());
+        JSONArray jsonArray1 = json1.getJSONArray("data");
+
+        if(jsonArray1.isEmpty()){
+            return;
+        }
+
+        /*
+        Paso 2: Conseguir todos los chats de la página en ig
+         */
+
+        JSONObject firstItem = jsonArray1.getJSONObject(0);
+
+        // Extract access_token and id
+        String pageAccessToken = firstItem.getString("access_token");
+        String pageId = firstItem.getString("id");
+
+        this.urlConversationIdB += pageAccessToken;
+        this.urlConversationIdA += pageId;
+        String urlConversation = this.urlConversationIdA + this.urlConversationIdB;
+
+
+
+        HttpClient client2 = HttpClient.newHttpClient();
+        //System.out.println("URL: " + urlPageId);
+
+
+        HttpRequest request2 = HttpRequest.newBuilder()
+                .uri(URI.create(urlConversation))
+                .GET()
+                .build();
+
+        HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+
+        System.out.println(response2.body());
+
+        JSONObject json2 = new JSONObject(response2.body());
+        JSONArray jsonArray2 = json2.getJSONArray("data");
+
+
+        /*
+        Paso 3: Iterar sobre los chats y leer todos los mensajes individualmente
+         */
+
+
+        for (int i = 0; i < jsonArray2.length(); i++) {
+            JSONObject conversation = jsonArray2.getJSONObject(i);
+
+
+
+            // Extract conversation details
+            String conversationId = conversation.getString("id");
+            String messagesUrl = "https://graph.facebook.com/v21.0/" + conversationId + "/messages?fields=from,to,message&access_token=" + pageAccessToken;
+
+            HttpClient client3 = HttpClient.newHttpClient();
+            //System.out.println("URL: " + urlPageId);
+
+
+            HttpRequest request3 = HttpRequest.newBuilder()
+                    .uri(URI.create(messagesUrl))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response3 = client.send(request3, HttpResponse.BodyHandlers.ofString());
+
+            // Parse the JSON response
+            JSONObject jsonMessages = new JSONObject(response3.body());
+
+            // Check if it has data
+            if (!jsonMessages.has("data")) {
+                System.out.println("No messages found for conversation " + conversationId);
+                continue;
+            }
+
+            JSONArray messagesArray = jsonMessages.getJSONArray("data");
+
+            // Iterate over messages
+            for (int j = 0; j < messagesArray.length(); j++) {
+                JSONObject messageObj = messagesArray.getJSONObject(j);
+
+                String messageText = messageObj.has("message") ? messageObj.getString("message") : "(no text)";
+
+                // "from" may not always exist, so check
+                String fromUser = "(unknown)";
+                if (messageObj.has("from")) {
+                    JSONObject fromObj = messageObj.getJSONObject("from");
+                    if (fromObj.has("username")) {
+                        fromUser = fromObj.getString("username");
+                    } else if (fromObj.has("name")) {
+                        fromUser = fromObj.getString("name");
+                    }
+                }
+
+                System.out.println(fromUser + ": " + messageText);
+            }
+
+            System.out.println("-----------------------------------------");
+        }
+
+
+
+
+    }
+
+
+
+
+}
