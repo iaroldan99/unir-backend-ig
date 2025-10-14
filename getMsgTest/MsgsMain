@@ -2,9 +2,14 @@ package org.example;
 
 import java.io.IOException;
 
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     static void main() throws IOException, InterruptedException {
-        MsgsFunc msgsGet = new MsgsFunc("<Token-De-Usuario>");
-        msgsGet.getMsg();
+        String token = "EAALj0YtG29cBPhRNudVrAGRNVHkl5TZCgbdf3IRC1dBaMZBkoLFb7H2Hq2MCX9Frqk4vAoAJst0uZCWyAH8ZA3Gv4jLDkRlIBkjzKagGHzi6a6h0oYlADPVWaEckeso0ATTsXqViEPPXWSZAFGdasxY0Tn4c8l9HzStrEXB1sy6ZAfMQoWXNorbLe6HayXZB4caksIdx0NAj4jZAdLiyCWYkNsZBHqjeIt8LZByzMx";
+        String recept = "1597241948312451";
+        MsgsFunc msgsGet = new MsgsFunc(token);
+        //msgsGet.getMsg();
+        msgsGet.postMessage(token, recept, "prueba 2");
     }
 }
