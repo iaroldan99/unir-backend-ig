@@ -6,10 +6,11 @@ import java.io.IOException;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     static void main() throws IOException, InterruptedException {
-        String token = "EAALj0YtG29cBPhRNudVrAGRNVHkl5TZCgbdf3IRC1dBaMZBkoLFb7H2Hq2MCX9Frqk4vAoAJst0uZCWyAH8ZA3Gv4jLDkRlIBkjzKagGHzi6a6h0oYlADPVWaEckeso0ATTsXqViEPPXWSZAFGdasxY0Tn4c8l9HzStrEXB1sy6ZAfMQoWXNorbLe6HayXZB4caksIdx0NAj4jZAdLiyCWYkNsZBHqjeIt8LZByzMx";
-        String recept = "1597241948312451";
-        MsgsFunc msgsGet = new MsgsFunc(token);
-        //msgsGet.getMsg();
-        msgsGet.postMessage(token, recept, "prueba 2");
+        String token = "EAALj0YtG29cBPpnoIOnfzOM2GwyISevLXCmlSIGFJk3BR6cQYqy5ZBzseY3NrWjQheVTI2tfm6HnkZC0MbkuAuI7c4Huqsewk0RKmK1ZBXeuLYj09m01BlsuiBbBOjAiccKZAV0SGFmY8IyUroDU6mD8oAUhuiOm4bdT4zPVdc4RjGXkwtOcxY5JpcnMfwrZA3rPsZApQmHWDm22gUjn7AkjxraI9dAUbpF25E";
+        String receptorId = "1597241948312451";
+        ApiManager apiManager = new ApiManager();
+        //apiManager.getMessages(token);
+        apiManager.postMessage(token, receptorId, "prueba3");
     }
 }
+
