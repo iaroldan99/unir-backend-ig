@@ -1,0 +1,191 @@
+package org.example;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+public class ApiManager {
+
+    public static final String URL_ROOT = "https://graph.facebook.com/v21.0/";
+    public static final String URL_ACCOUNTS = "me/accounts";
+    public static final String URL_TOKEN = "access_token=";
+    public static final String GET_CONVERSATIONS = "/conversations?platform=instagram";
+    public static final String GET_MESSAGES = "/messages?fields=from,to,message";
+    public static final String POST_MESSAGES = "/messages";
+
+    String pageToken;
+    String pageId;
+
+    //Setea los valores de pageToken y pageId
+    private void setPageData(String userToken) throws IOException, InterruptedException{
+        String urlPageId = URL_ROOT + URL_ACCOUNTS + "?" + URL_TOKEN + userToken;
+        HttpClient client = HttpClient.newHttpClient();
+
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(urlPageId))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        JSONObject json = new JSONObject(response.body());
+        JSONArray jsonArray = json.getJSONArray("data");
+
+        JSONObject firstItem = jsonArray.getJSONObject(0);
+
+        // Extract access_token and id
+        this.pageToken = firstItem.getString("access_token");
+        this.pageId = firstItem.getString("id");
+
+        System.out.println(this.pageToken);
+        System.out.println(this.pageId);
+    }
+
+
+
+
+    public void getMessages(String userToken) throws IOException, InterruptedException {
+
+
+        /*
+        Paso 1: Tenemos que conseguir:
+        -Id de la página de fb
+        -Token de la página (=/= token de usuario)
+         */
+
+
+        this.setPageData(userToken);
+
+        if (pageToken == null || pageId == null)  {
+            return;
+        }
+
+        /*
+        Paso 2: Conseguir todos los chats de la página en ig
+         */
+
+        String urlConversations = URL_ROOT + this.pageId + GET_CONVERSATIONS + "&" + URL_TOKEN + this.pageToken;
+
+        HttpClient client = HttpClient.newHttpClient();
+        //System.out.println("URL: " + urlPageId);
+
+
+        HttpRequest requestConversations = HttpRequest.newBuilder()
+                .uri(URI.create(urlConversations))
+                .GET()
+                .build();
+
+        HttpResponse<String> responseConversations = client.send(requestConversations, HttpResponse.BodyHandlers.ofString());
+
+        //System.out.println(responseConversations.body());
+
+        JSONObject jsonConversations = new JSONObject(responseConversations.body());
+        JSONArray conversationsJSONArray = jsonConversations.getJSONArray("data");
+
+        /*
+        Paso 3: Iterar sobre los chats y leer todos los mensajes individualmente
+         */
+
+        for (int i = 0; i < conversationsJSONArray.length(); i++) {
+            JSONObject conversation = conversationsJSONArray.getJSONObject(i);
+
+            // Extract conversation details
+            String conversationId = conversation.getString("id");
+            String messagesUrl = URL_ROOT + conversationId + GET_MESSAGES + "&" + URL_TOKEN + this.pageToken;
+
+
+            HttpRequest messagesRequest = HttpRequest.newBuilder()
+                    .uri(URI.create(messagesUrl))
+                    .GET()
+                    .build();
+
+            HttpResponse<String> conversationResponse = client.send(messagesRequest, HttpResponse.BodyHandlers.ofString());
+
+            // Parse the JSON response
+            JSONObject jsonMessages = new JSONObject(conversationResponse.body());
+
+            // Check if it has data
+            if (!jsonMessages.has("data")) {
+                System.out.println("No messages found for conversation " + conversationId);
+                continue;
+            }
+
+            JSONArray messagesArray = jsonMessages.getJSONArray("data");
+
+            // Iterate over messages
+            for (int j = 0; j < messagesArray.length(); j++) {
+                JSONObject messageObj = messagesArray.getJSONObject(j);
+
+                String messageText = messageObj.has("message") ? messageObj.getString("message") : "(no text)";
+
+                // "from" may not always exist, so check
+                String fromUser = "(unknown)";
+                if (messageObj.has("from")) {
+                    JSONObject fromObj = messageObj.getJSONObject("from");
+                    if (fromObj.has("username")) {
+                        fromUser = fromObj.getString("username");
+                    } else if (fromObj.has("name")) {
+                        fromUser = fromObj.getString("name");
+                    }
+                }
+
+                System.out.println(fromUser + ": " + messageText);
+            }
+
+            System.out.println("-----------------------------------------");
+        }
+
+
+    }
+
+
+    // Constructor del payload JSON que se manda
+    private JSONObject buildMessageInfo(String recipientId, String msg){
+        JSONObject message = new JSONObject();
+        message.put("text", msg);
+
+        JSONObject recipient = new JSONObject();
+        recipient.put("id", recipientId);
+
+        JSONObject body = new JSONObject();
+        body.put("messaging_type", "RESPONSE");
+        body.put("recipient", recipient);
+        body.put("message", message);
+        return body;
+    }
+
+
+    public void postMessage(String userToken, String recipientId, String msg) throws IOException, InterruptedException{
+        this.setPageData(userToken);
+
+        String urlPostMessage = URL_ROOT + this.pageId + POST_MESSAGES + "?" + URL_TOKEN + this.pageToken;
+
+        JSONObject postBody = this.buildMessageInfo(recipientId, msg);
+
+        System.out.println(postBody.toString(2));
+
+
+        HttpRequest requestPost = HttpRequest.newBuilder()
+                .uri(URI.create(urlPostMessage))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(postBody.toString()))
+                .build();
+
+        // Send request
+        HttpClient clientPost = HttpClient.newHttpClient();
+        HttpResponse<String> postResponse = clientPost.send(requestPost, HttpResponse.BodyHandlers.ofString());
+
+        // Print response
+        System.out.println(postResponse.body());
+    }
+
+
+
+
+}
